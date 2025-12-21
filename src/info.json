@@ -1,0 +1,33 @@
+{
+    "identifier": "turan.boblatex",
+    "version": "1.0.0",
+    "category": "ocr",
+    "name": "BobLatex",
+    "summary": "使用通义千问 Qwen-VL-Max 进行数学公式识别",
+    "author": "TuRan",
+    "minBobVersion": "0.5.0",
+    "options": [
+        {
+            "identifier": "apiKey",
+            "type": "text",
+            "title": "API Key",
+            "desc": "OpenAI compatible 的 API Key",
+            "defaultValue": ""
+        },
+        {
+            "identifier": "model",
+            "type": "text",
+            "title": "模型 (model)",
+            "desc": "用于识别的模型名称，例如 qwen-vl-max。留空将使用默认值 qwen-vl-max",
+            "defaultValue": "qwen-vl-max"
+        }
+        ,
+        {
+            "identifier": "apiUrl",
+            "type": "text",
+            "title": "API URL",
+            "desc": "用于请求的 OpenAI 兼容模式 URL. 默认使用DashScope",
+            "defaultValue": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+        }
+    ]
+}

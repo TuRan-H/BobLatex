@@ -1,0 +1,12 @@
+{
+  "versions": [
+    {
+      "version": "1.0.0",
+      "desc": "更新日志",
+      "sha256": "bf7ac094100739eadabe00fb7ca226f5a9f1f4dd61d7a89ab83edae7ce12bb9e\nf5779aa765bd444e3932fcef63bb86d22a3cf62214e16c6a1dd166485e7ea46b\na4d9a994a789c472b8ec04d5e70be13d836ea6ce64e7948c5f98b3b696a389a0\n21a9e06d777f356817a61fe1c342b50ac0af989551f68bdb69c15eb4745d63c4",
+      "url": "https://github.com/TuRan-H/BobLatex",
+      "minBobVersion": "0.5.0",
+      "timestamp": 1766309233000
+    }
+  ]
+}
