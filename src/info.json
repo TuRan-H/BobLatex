@@ -5,6 +5,7 @@
     "name": "BobLatex",
     "summary": "使用通义千问 Qwen-VL-Max 进行数学公式识别",
     "author": "TuRan",
+    "homepage": "https://github.com/TuRan-H/BobLatex",
     "minBobVersion": "0.5.0",
     "options": [
         {
@@ -28,6 +29,13 @@
             "title": "API URL",
             "desc": "用于请求的 OpenAI 兼容模式 URL. 默认使用DashScope",
             "defaultValue": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
+        },
+        {
+            "identifier": "prompt",
+            "type": "text",
+            "title": "Prompt",
+            "desc": "用于OCR识别的prompt, 如果留空则使用默认prompt",
+            "defaultValue": "Please identify the content in this image. If it is a mathematical formula, convert it to LaTeX format. If it is text, output it directly. Please output the result directly, without including any markdown markers or other unnecessary text."
         }
     ]
 }
