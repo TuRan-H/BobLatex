@@ -11,14 +11,14 @@
         {
             "identifier": "apiKey",
             "type": "text",
-            "title": "API Key",
+            "title": "API KEY",
             "desc": "OpenAI compatible 的 API Key",
             "defaultValue": ""
         },
         {
             "identifier": "model",
             "type": "text",
-            "title": "模型 (model)",
+            "title": "MODEL",
             "desc": "用于识别的模型名称，例如 qwen-vl-max。留空将使用默认值 qwen-vl-max",
             "defaultValue": "qwen-vl-max"
         }
@@ -33,7 +33,7 @@
         {
             "identifier": "prompt",
             "type": "text",
-            "title": "Prompt",
+            "title": "PROMPT",
             "desc": "用于OCR识别的prompt, 如果留空则使用默认prompt",
             "defaultValue": "Please identify the content in this image. If it is a mathematical formula, convert it to LaTeX format. If it is text, output it directly. Please output the result directly, without including any markdown markers or other unnecessary text."
         }

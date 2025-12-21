@@ -10,7 +10,8 @@
 
 因此, 您需要申请DashScope的api key. 详见: [Aliyun ApiKey申请](https://help.aliyun.com/zh/model-studio/get-api-key)
 
-此外, 您也可以通过修改 `apiUrl`  参数, 来使用任意的OpenAI compatible API. 
+此外, 您也可以通过修改 `API URL` 参数, 来使用任意的OpenAI compatible API. 您也可以通过修改 `MODEL` 参数来自由选定模型.
+
 
 # Thanks
 
