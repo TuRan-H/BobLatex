@@ -2,7 +2,7 @@
 
 一个使用LLM api进行Latex公式识别的Bob插件
 
-![image-20251222013019974](/Users/turan/OrbStack/dev/home/turan/Projects/BobLatex/.asset/image-20251222013019974.png)
+![image-20251222013019974](./.asset/image-20251222013019974.png)
 
 # 使用说明
 
