@@ -82,8 +82,7 @@ function ocr(query, completion) {
                 content = content.replace(/\n?```$/, '')
 
                 // 移除 latex dollar 标记
-                content = content.replace(/^\$/, '')
-                content = content.replace(/\$$/, '')
+                content = content.replace(/^\$+/, '').replace(/\$+$/, '')
 
                 completion({
                     result: {
