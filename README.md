@@ -15,6 +15,6 @@
 此外, 您也可以通过修改 `API URL` 参数, 来使用任意的OpenAI compatible API. 您也可以通过修改 `MODEL` 参数来自由选定模型.
 
 
-# Thanks
+# 感谢
 
 *   [wakewon/bob-plugin-simpletex](https://github.com/wakewon/bob-plugin-simpletex)
