@@ -1,10 +1,19 @@
 {
+  "identifier": "turan.boblatex",
   "versions": [
     {
+      "version": "1.1.0",
+      "desc": "完善 OCR 插件规范实现：新增 pluginValidate（API Key 验证按钮）、pluginTimeoutInterval（90 秒超时）、supportBoundingBox（声明不支持坐标）；更新默认 prompt；增加 info.json appcast 字段",
+      "sha256": "8c4e9acbe1aa9c3a46004c8dfcf96ed63b79110c9b7719ef21b456d6ce2a7861",
+      "url": "https://github.com/TuRan-H/BobLatex/releases/download/v1.1.0/BobLatex-v1.1.0.bobplugin",
+      "minBobVersion": "0.5.0",
+      "timestamp": 1781277449878
+    },
+    {
       "version": "1.0.0",
-      "desc": "更新日志",
-      "sha256": "1c8d3c358524c7f29ebb170cfb122065d6a7fa3a2b5719cf6a5fe92e191e40dc\nf8f0b8059667f0175804c2273b6293f513566515ac3e2bbb090d221273814164\ndf13aa7e697fc4b1b3f2ef6bb0fd08e86bc2b264285bef4dd60150980aa8c9b0\ne2655f6f35aa3e437b68b8c1e84e00a3f4aedd3ed3642a026764bf0b3f5f3a91",
-      "url": "https://github.com/TuRan-H/BobLatex",
+      "desc": "初始版本",
+      "sha256": "1c8d3c358524c7f29ebb170cfb122065d6a7fa3a2b5719cf6a5fe92e191e40dc",
+      "url": "https://github.com/TuRan-H/BobLatex/releases/download/v1.0.0/BobLatex-v1.0.0.bobplugin",
       "minBobVersion": "0.5.0",
       "timestamp": 1766415837000
     }

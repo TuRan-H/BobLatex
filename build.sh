@@ -1,46 +1,181 @@
 #!/bin/bash
+# BobLatex 插件打包脚本
+# 按照 https://bobtranslate.com/plugin/quickstart/pack.html 规范进行打包
+# 并更新 appcast.json（https://bobtranslate.com/plugin/quickstart/publish.html）
 
-# 检查info.json文件是否存在
+set -e
+
+# ── 读取版本号 ──────────────────────────────────────────────────────────────
+
 if [ ! -f "src/info.json" ]; then
-    echo "info.json 文件不存在"
+    echo "错误: src/info.json 文件不存在"
     exit 1
 fi
 
-# 从info.json文件中提取version值
-version=$(jq -r '.version' src/info.json)
-
-if [ -z "$version" ]; then
-    echo "未找到 version 值"
+# 优先使用 jq，回退到 python3
+if command -v jq &>/dev/null; then
+    version=$(jq -r '.version' src/info.json)
+    identifier=$(jq -r '.identifier' src/info.json)
+elif command -v python3 &>/dev/null; then
+    version=$(python3 -c "import json; d=json.load(open('src/info.json')); print(d['version'])")
+    identifier=$(python3 -c "import json; d=json.load(open('src/info.json')); print(d['identifier'])")
+else
+    echo "错误: 需要 jq 或 python3，请先安装其中之一"
     exit 1
 fi
 
-# 进入src目录
-cd src
+if [ -z "$version" ] || [ "$version" = "null" ]; then
+    echo "错误: 未在 info.json 中找到有效的 version 值"
+    exit 1
+fi
 
-# 生成插件zip文件
-zip ../BobLatex-v$version.bobplugin *.js *.json *.png
+PLUGIN_FILE="BobLatex-v${version}.bobplugin"
+echo "正在构建版本 v${version}（identifier: ${identifier}）..."
 
-# 生成时间戳
-timestamp=$(($(date +%s) * 1000))
+# ── 打包插件 ────────────────────────────────────────────────────────────────
+# 按照官方规范：进入插件根目录，选中所有文件进行压缩，不要压缩目录本身
+# 支持 zip（macOS）和 python3（跨平台回退）
 
-# 返回上一级目录
-cd ..
+if command -v zip &>/dev/null; then
+    (
+        cd src
+        zip -r "../${PLUGIN_FILE}" *.js *.json *.png
+    )
+elif command -v python3 &>/dev/null; then
+    python3 - <<PYEOF
+import zipfile, os, glob
 
-# 计算sha256值
-sha256=$(shasum -a 256 BobLatex-v$version.bobplugin src/*.js src/*.json src/*.png | awk '{print $1}')
+src = 'src'
+out = '${PLUGIN_FILE}'
+patterns = ['*.js', '*.json', '*.png']
 
-# 检查appcast.json是否存在或为空，如果是则初始化
+with zipfile.ZipFile(out, 'w', zipfile.ZIP_DEFLATED) as zf:
+    for pat in patterns:
+        for fp in glob.glob(os.path.join(src, pat)):
+            arcname = os.path.basename(fp)
+            zf.write(fp, arcname)
+            print(f'  打包: {arcname}')
+print(f'插件文件已生成: {out}')
+PYEOF
+else
+    echo "错误: 找不到 zip 或 python3，无法打包"
+    exit 1
+fi
+
+echo "插件文件已生成: ${PLUGIN_FILE}"
+
+# ── 计算 SHA256 ──────────────────────────────────────────────────────────────
+if command -v shasum &>/dev/null; then
+    sha256=$(shasum -a 256 "${PLUGIN_FILE}" | awk '{print $1}')
+elif command -v sha256sum &>/dev/null; then
+    sha256=$(sha256sum "${PLUGIN_FILE}" | awk '{print $1}')
+elif command -v python3 &>/dev/null; then
+    sha256=$(python3 -c "
+import hashlib
+h = hashlib.sha256()
+with open('${PLUGIN_FILE}', 'rb') as f:
+    h.update(f.read())
+print(h.hexdigest())
+")
+else
+    echo "错误: 找不到 shasum / sha256sum / python3，无法计算 SHA256"
+    exit 1
+fi
+
+echo "SHA256: ${sha256}"
+
+# ── 生成时间戳（毫秒）─────────────────────────────────────────────────────────
+if command -v python3 &>/dev/null; then
+    timestamp=$(python3 -c "import time; print(int(time.time() * 1000))")
+else
+    timestamp=$(($(date +%s) * 1000))
+fi
+
+# ── 更新 appcast.json ────────────────────────────────────────────────────────
 if [ ! -s "appcast.json" ]; then
-    echo '{"versions": []}' >appcast.json
+    echo "{\"identifier\": \"${identifier}\", \"versions\": []}" > appcast.json
 fi
 
-# 更新appcast.json中与提取的版本号相匹配的项，如果不存在则添加新项
-jq --arg version "$version" --arg sha256 "$sha256" --argjson timestamp $timestamp '
-    if (.versions | map(.version) | index($version)) then
-        .versions |= map(if .version == $version then .sha256 = $sha256 | .timestamp = $timestamp else . end)
-    else
-        .versions = [{"version": $version, "desc": "更新日志","sha256": $sha256, "url": "", "minBobVersion": "0.5.0","timestamp": $timestamp}] + .versions
-    end
-' appcast.json >tmp.json && mv tmp.json appcast.json
+if command -v jq &>/dev/null; then
+    jq --arg version "$version" \
+       --arg sha256 "$sha256" \
+       --arg identifier "$identifier" \
+       --argjson timestamp "$timestamp" '
+        .identifier = $identifier |
+        if (.versions | map(.version) | index($version)) then
+            .versions |= map(
+                if .version == $version then
+                    .sha256 = $sha256 |
+                    .timestamp = $timestamp
+                else
+                    .
+                end
+            )
+        else
+            .versions = [{
+                "version": $version,
+                "desc": "更新日志（请手动填写）",
+                "sha256": $sha256,
+                "url": ("https://github.com/TuRan-H/BobLatex/releases/download/v" + $version + "/BobLatex-v" + $version + ".bobplugin"),
+                "minBobVersion": "0.5.0",
+                "timestamp": $timestamp
+            }] + .versions
+        end
+    ' appcast.json > tmp.json && mv tmp.json appcast.json
+elif command -v python3 &>/dev/null; then
+    python3 - <<PYEOF
+import json, os
 
-echo "更新成功"
+path = 'appcast.json'
+with open(path) as f:
+    data = json.load(f)
+
+data['identifier'] = '${identifier}'
+
+ver = '${version}'
+sha = '${sha256}'
+ts  = ${timestamp}
+url = f'https://github.com/TuRan-H/BobLatex/releases/download/v{ver}/BobLatex-v{ver}.bobplugin'
+
+versions = data.get('versions', [])
+found = False
+for v in versions:
+    if v.get('version') == ver:
+        v['sha256'] = sha
+        v['timestamp'] = ts
+        found = True
+        break
+
+if not found:
+    versions.insert(0, {
+        'version': ver,
+        'desc': '更新日志（请手动填写）',
+        'sha256': sha,
+        'url': url,
+        'minBobVersion': '0.5.0',
+        'timestamp': ts
+    })
+    data['versions'] = versions
+
+with open(path, 'w', encoding='utf-8') as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+
+print('appcast.json 已更新')
+PYEOF
+else
+    echo "警告: 找不到 jq 或 python3，无法自动更新 appcast.json，请手动更新"
+fi
+
+echo ""
+echo "════════════════════════════════════════"
+echo "构建成功！"
+echo "  插件文件: ${PLUGIN_FILE}"
+echo "  SHA256  : ${sha256}"
+echo "  时间戳  : ${timestamp}"
+echo ""
+echo "后续步骤（发布到 GitHub）："
+echo "  1. 将 ${PLUGIN_FILE} 上传到 GitHub Release（Tag: v${version}）"
+echo "  2. 检查 appcast.json 中 url 和 desc 字段是否正确"
+echo "  3. 将 appcast.json 推送到仓库根目录"
+echo "  4. 确保仓库已设置 GitHub Topic: bobplugin"
+echo "════════════════════════════════════════"

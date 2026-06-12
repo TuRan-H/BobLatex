@@ -1,11 +1,12 @@
 {
     "identifier": "turan.boblatex",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "category": "ocr",
     "name": "BobLatex",
-    "summary": "使用通义千问 Qwen-VL-Max 进行数学公式识别",
+    "summary": "使用 OpenAI 兼容 API（默认 Qwen-VL-Max）进行数学公式识别",
     "author": "TuRan",
     "homepage": "https://github.com/TuRan-H/BobLatex",
+    "appcast": "https://github.com/TuRan-H/BobLatex/raw/main/appcast.json",
     "minBobVersion": "0.5.0",
     "options": [
         {
@@ -21,21 +22,20 @@
             "title": "MODEL",
             "desc": "用于识别的模型名称，例如 qwen-vl-max。留空将使用默认值 qwen-vl-max",
             "defaultValue": "qwen-vl-max"
-        }
-        ,
+        },
         {
             "identifier": "apiUrl",
             "type": "text",
             "title": "API URL",
-            "desc": "用于请求的 OpenAI 兼容模式 URL. 默认使用DashScope",
+            "desc": "用于请求的 OpenAI 兼容模式 URL。默认使用 DashScope（阿里云）",
             "defaultValue": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
         },
         {
             "identifier": "prompt",
             "type": "text",
             "title": "PROMPT",
-            "desc": "用于OCR识别的prompt, 如果留空则使用默认prompt",
-            "defaultValue": "Please identify the content in this image. If it is a mathematical formula, convert it to LaTeX format. If it is text, output it directly. Please output the result directly, without including any markdown markers or other unnecessary text."
+            "desc": "用于 OCR 识别的 prompt，留空则使用内置默认 prompt",
+            "defaultValue": "Please identify the content in this image. If it is a mathematical formula, convert it to LaTeX format. If it is plain text, output it directly. Output the result only, without any markdown fences, dollar signs, or other surrounding markers."
         }
     ]
 }
